@@ -1,9 +1,12 @@
+import { Suspense } from "react";
 import type { GitHubRepo } from "@/types/github";
 import type { DevToArticle } from "@/types/devto";
 import type { HypeScore } from "@/types/hype";
 import { HypeChart } from "@/components/HypeChart";
 import { GitHubSection } from "@/components/GitHubSection";
 import { DevToSection } from "@/components/DevToSection";
+import { SkeletonCard } from "@/components/SkeletonCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ??
@@ -11,49 +14,54 @@ const BASE_URL =
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000");
 
-async function getGitHub(): Promise<{ data: GitHubRepo[]; fetchedAt: number }> {
+async function GitHubSectionAsync() {
   try {
     const res = await fetch(`${BASE_URL}/api/github/trending`, {
       next: { revalidate: 900 },
     });
     const json = (await res.json()) as { data?: GitHubRepo[] };
-    return { data: json.data ?? [], fetchedAt: Date.now() };
+    const data = json.data ?? [];
+    return <GitHubSection repos={data} lastFetchedAt={Date.now()} />;
   } catch {
-    return { data: [], fetchedAt: Date.now() };
+    return <GitHubSection repos={[]} lastFetchedAt={Date.now()} />;
   }
 }
 
-async function getDevTo(): Promise<{ data: DevToArticle[]; fetchedAt: number }> {
+async function DevToSectionAsync() {
   try {
     const res = await fetch(`${BASE_URL}/api/devto/articles`, {
       next: { revalidate: 600 },
     });
     const json = (await res.json()) as { data?: DevToArticle[] };
-    return { data: json.data ?? [], fetchedAt: Date.now() };
+    const data = json.data ?? [];
+    return <DevToSection articles={data} lastFetchedAt={Date.now()} />;
   } catch {
-    return { data: [], fetchedAt: Date.now() };
+    return <DevToSection articles={[]} lastFetchedAt={Date.now()} />;
   }
 }
 
-async function getHype(): Promise<HypeScore[]> {
+async function HypeChartAsync() {
   try {
     const res = await fetch(`${BASE_URL}/api/stats/hype`, {
       next: { revalidate: 600 },
     });
     const json = (await res.json()) as { data?: HypeScore[] };
-    return json.data ?? [];
+    return <HypeChart data={json.data ?? []} />;
   } catch {
-    return [];
+    return <HypeChart data={[]} />;
   }
 }
 
-export default async function Home() {
-  const [github, devto, hypeData] = await Promise.all([
-    getGitHub(),
-    getDevTo(),
-    getHype(),
-  ]);
+function HypeChartSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Skeleton className="h-6 w-48" />
+      <Skeleton className="h-80 w-full" />
+    </div>
+  );
+}
 
+export default function Home() {
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "var(--color-bg, #FAF7F2)" }}>
       {/* Header */}
@@ -127,7 +135,9 @@ export default async function Home() {
           >
             HypeScore
           </p>
-          <HypeChart data={hypeData} />
+          <Suspense fallback={<HypeChartSkeleton />}>
+            <HypeChartAsync />
+          </Suspense>
         </section>
 
         {/* Deux colonnes */}
@@ -140,7 +150,9 @@ export default async function Home() {
               border: "0.5px solid var(--border-primary, rgba(60,55,50,0.15))",
             }}
           >
-            <GitHubSection repos={github.data} lastFetchedAt={github.fetchedAt} />
+            <Suspense fallback={<SkeletonCard count={5} />}>
+              <GitHubSectionAsync />
+            </Suspense>
           </div>
 
           {/* Dev.to */}
@@ -151,7 +163,9 @@ export default async function Home() {
               border: "0.5px solid var(--border-primary, rgba(60,55,50,0.15))",
             }}
           >
-            <DevToSection articles={devto.data} lastFetchedAt={devto.fetchedAt} />
+            <Suspense fallback={<SkeletonCard count={5} />}>
+              <DevToSectionAsync />
+            </Suspense>
           </div>
         </div>
       </main>

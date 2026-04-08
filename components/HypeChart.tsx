@@ -38,8 +38,9 @@ function CustomTooltip({ active, payload, label }: TooltipProps<number, string>)
 export function HypeChart({ data }: HypeChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-80 text-muted-foreground">
-        Données indisponibles
+      <div className="flex flex-col items-center justify-center h-80 gap-2 text-muted-foreground">
+        <span className="text-3xl opacity-40">📊</span>
+        <p className="text-sm">Pas encore de données croisées disponibles.</p>
       </div>
     );
   }

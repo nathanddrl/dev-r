@@ -5,6 +5,7 @@ import type { GitHubRepo } from "@/types/github";
 import { FreshnessIndicator } from "./FreshnessIndicator";
 import { LanguageFilter } from "./LanguageFilter";
 import { RepoCard } from "./RepoCard";
+import { Card } from "@/components/ui/card";
 
 const LANGUAGES = ["JavaScript", "TypeScript", "Python", "Rust", "Go"];
 
@@ -15,6 +16,31 @@ interface GitHubSectionProps {
 
 export function GitHubSection({ repos, lastFetchedAt }: GitHubSectionProps) {
   const [selected, setSelected] = useState<string | null>(null);
+
+  if (repos.length === 0) {
+    return (
+      <section>
+        <h2
+          className="mb-4"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "20px",
+            fontWeight: 700,
+            letterSpacing: "-0.01em",
+            color: "var(--color-text-primary, #3D3A35)",
+          }}
+        >
+          GitHub
+        </h2>
+        <Card className="flex flex-col items-center justify-center p-8 text-center min-h-[400px]">
+          <span className="text-3xl mb-3">⚠️</span>
+          <p className="text-sm text-muted-foreground">
+            Source indisponible — réessayez dans quelques minutes
+          </p>
+        </Card>
+      </section>
+    );
+  }
 
   const filtered = selected
     ? repos.filter((r) => r.language === selected)
