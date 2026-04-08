@@ -1,20 +1,79 @@
-export default function Home() {
+import type { GitHubRepo } from "@/types/github";
+import type { DevToArticle } from "@/types/devto";
+import type { HypeScore } from "@/types/hype";
+import { HypeChart } from "@/components/HypeChart";
+import { GitHubSection } from "@/components/GitHubSection";
+import { DevToSection } from "@/components/DevToSection";
+
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ??
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000");
+
+async function getGitHub(): Promise<{ data: GitHubRepo[]; fetchedAt: number }> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/github/trending`, {
+      next: { revalidate: 900 },
+    });
+    const json = (await res.json()) as { data?: GitHubRepo[] };
+    return { data: json.data ?? [], fetchedAt: Date.now() };
+  } catch {
+    return { data: [], fetchedAt: Date.now() };
+  }
+}
+
+async function getDevTo(): Promise<{ data: DevToArticle[]; fetchedAt: number }> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/devto/articles`, {
+      next: { revalidate: 600 },
+    });
+    const json = (await res.json()) as { data?: DevToArticle[] };
+    return { data: json.data ?? [], fetchedAt: Date.now() };
+  } catch {
+    return { data: [], fetchedAt: Date.now() };
+  }
+}
+
+async function getHype(): Promise<HypeScore[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/stats/hype`, {
+      next: { revalidate: 600 },
+    });
+    const json = (await res.json()) as { data?: HypeScore[] };
+    return json.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function Home() {
+  const [github, devto, hypeData] = await Promise.all([
+    getGitHub(),
+    getDevTo(),
+    getHype(),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen" style={{ background: "var(--color-bg, #FAF7F2)" }}>
       {/* Header */}
-      <header className="px-8 py-6 flex items-center justify-between border-b border-border">
+      <header
+        className="px-8 py-5 flex items-center justify-between"
+        style={{ borderBottom: "0.5px solid var(--border-primary, rgba(60,55,50,0.15))" }}
+      >
         <div className="flex items-center gap-3">
           <span
-            className="text-2xl font-bold tracking-tight text-foreground"
-            style={{ fontFamily: "var(--font-display)" }}
+            className="text-[28px] font-bold tracking-[-0.02em]"
+            style={{ fontFamily: "var(--font-display)", color: "var(--color-text-primary, #3D3A35)" }}
           >
             Dev&apos;R
           </span>
           <span
-            className="text-[11px] font-medium uppercase tracking-widest px-3 py-1 rounded-full"
+            className="text-[11px] font-medium uppercase tracking-[0.08em] px-3 py-1 rounded-full"
             style={{
               background: "var(--color-accent-light, #F5EBD8)",
               color: "var(--color-accent-dark, #8B5E2B)",
+              fontFamily: "var(--font-body)",
             }}
           >
             Beta
@@ -24,23 +83,23 @@ export default function Home() {
           className="text-sm hidden sm:block"
           style={{ color: "var(--color-text-secondary, #6B6560)", fontFamily: "var(--font-body)" }}
         >
-          Veille GitHub + Dev.to
+          La tech qui monte, chaque matin.
         </p>
       </header>
 
       {/* Main */}
-      <main className="flex-1 px-8 py-12 max-w-6xl mx-auto w-full">
+      <main className="flex-1 px-6 md:px-8 py-10 max-w-7xl mx-auto w-full">
         {/* Hero */}
-        <section className="mb-16">
+        <section className="mb-12">
           <p
-            className="text-[11px] font-medium uppercase tracking-widest mb-3"
-            style={{ color: "var(--color-accent-val, #D97B4F)", fontFamily: "var(--font-body)" }}
+            className="text-[11px] font-medium uppercase tracking-[0.08em] mb-3"
+            style={{ color: "var(--color-accent, #D97B4F)", fontFamily: "var(--font-body)" }}
           >
-            Dashboard
+            Dashboard veille tech
           </p>
           <h1
-            className="text-[40px] font-bold leading-[1.05] tracking-[-0.03em] mb-4 text-foreground"
-            style={{ fontFamily: "var(--font-display)" }}
+            className="text-[40px] font-bold leading-[1.05] tracking-[-0.03em] mb-4"
+            style={{ fontFamily: "var(--font-display)", color: "var(--color-text-primary, #3D3A35)" }}
           >
             La tech qui monte,
             <br />
@@ -54,123 +113,54 @@ export default function Home() {
           </p>
         </section>
 
-        {/* Placeholder sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* HypeChart placeholder */}
+        {/* HypeChart — pleine largeur */}
+        <section
+          className="mb-10 rounded-[16px] p-6"
+          style={{
+            background: "var(--color-surface, #E8DFD0)",
+            border: "0.5px solid var(--border-primary, rgba(60,55,50,0.15))",
+          }}
+        >
+          <p
+            className="text-[11px] font-medium uppercase tracking-[0.08em] mb-2"
+            style={{ color: "var(--color-accent, #D97B4F)", fontFamily: "var(--font-body)" }}
+          >
+            HypeScore
+          </p>
+          <HypeChart data={hypeData} />
+        </section>
+
+        {/* Deux colonnes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* GitHub */}
           <div
-            className="lg:col-span-2 rounded-[16px] p-6 border"
+            className="rounded-[16px] p-6"
             style={{
-              background: "var(--card)",
-              borderColor: "var(--border)",
+              background: "var(--color-surface, #E8DFD0)",
+              border: "0.5px solid var(--border-primary, rgba(60,55,50,0.15))",
             }}
           >
-            <p
-              className="text-[11px] font-medium uppercase tracking-widest mb-2"
-              style={{ color: "var(--color-accent-val, #D97B4F)", fontFamily: "var(--font-body)" }}
-            >
-              HypeScore
-            </p>
-            <h2
-              className="text-xl font-bold tracking-[-0.01em] mb-6 text-foreground"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Tendances agrégées
-            </h2>
-            <div
-              className="h-40 rounded-[10px] flex items-center justify-center"
-              style={{ background: "rgba(60,55,50,0.05)" }}
-            >
-              <span
-                className="text-sm"
-                style={{ color: "var(--color-text-tertiary, #9E9890)", fontFamily: "var(--font-body)" }}
-              >
-                Graphique à venir
-              </span>
-            </div>
+            <GitHubSection repos={github.data} lastFetchedAt={github.fetchedAt} />
           </div>
 
-          {/* Filters placeholder */}
+          {/* Dev.to */}
           <div
-            className="rounded-[16px] p-6 border"
+            className="rounded-[16px] p-6"
             style={{
-              background: "var(--card)",
-              borderColor: "var(--border)",
+              background: "var(--color-surface, #E8DFD0)",
+              border: "0.5px solid var(--border-primary, rgba(60,55,50,0.15))",
             }}
           >
-            <p
-              className="text-[11px] font-medium uppercase tracking-widest mb-2"
-              style={{ color: "var(--color-accent-val, #D97B4F)", fontFamily: "var(--font-body)" }}
-            >
-              Filtres
-            </p>
-            <h2
-              className="text-xl font-bold tracking-[-0.01em] mb-6 text-foreground"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Langages
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {["TypeScript", "Python", "Go", "Rust"].map((lang) => (
-                <span
-                  key={lang}
-                  className="text-[11px] font-medium uppercase tracking-[0.08em] px-3 py-1 rounded-full cursor-pointer transition-opacity hover:opacity-70"
-                  style={{
-                    background: "var(--color-accent-light, #F5EBD8)",
-                    color: "var(--color-accent-dark, #8B5E2B)",
-                  }}
-                >
-                  {lang}
-                </span>
-              ))}
-            </div>
+            <DevToSection articles={devto.data} lastFetchedAt={devto.fetchedAt} />
           </div>
-        </div>
-
-        {/* Cards grid placeholder */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="rounded-[16px] p-5 border"
-              style={{
-                background: "var(--card)",
-                borderColor: "var(--border)",
-              }}
-            >
-              <p
-                className="text-[11px] font-medium uppercase tracking-widest mb-3"
-                style={{ color: "var(--color-accent-val, #D97B4F)", fontFamily: "var(--font-body)" }}
-              >
-                GitHub
-              </p>
-              <div
-                className="h-4 rounded-full mb-2"
-                style={{ background: "rgba(60,55,50,0.08)", width: "70%" }}
-              />
-              <div
-                className="h-3 rounded-full mb-2"
-                style={{ background: "rgba(60,55,50,0.05)", width: "90%" }}
-              />
-              <div
-                className="h-3 rounded-full mb-5"
-                style={{ background: "rgba(60,55,50,0.05)", width: "60%" }}
-              />
-              <div
-                className="pt-4 border-t"
-                style={{ borderColor: "var(--border)" }}
-              >
-                <div
-                  className="h-3 rounded-full"
-                  style={{ background: "rgba(60,55,50,0.05)", width: "40%" }}
-                />
-              </div>
-            </div>
-          ))}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="px-8 py-6 border-t border-border text-center">
+      <footer
+        className="px-8 py-5 text-center"
+        style={{ borderTop: "0.5px solid var(--border-primary, rgba(60,55,50,0.15))" }}
+      >
         <p
           className="text-xs"
           style={{ color: "var(--color-text-tertiary, #9E9890)", fontFamily: "var(--font-body)" }}

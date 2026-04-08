@@ -9,14 +9,11 @@ export function HypeScoreTooltip() {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Explication du HypeScore"
-          >
-            ℹ️
-          </button>
+        <TooltipTrigger
+          className="inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          aria-label="Explication du HypeScore"
+        >
+          ℹ️
         </TooltipTrigger>
         <TooltipContent className="max-w-xs text-sm">
           <p className="font-medium mb-1">Score calculé depuis :</p>
