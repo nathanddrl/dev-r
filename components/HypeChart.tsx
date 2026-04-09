@@ -8,8 +8,9 @@ import {
   Legend,
   Tooltip,
   ResponsiveContainer,
-  TooltipProps,
 } from "recharts";
+import type { TooltipProps } from "recharts";
+import type { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 import type { HypeScore } from "@/types/hype";
 import { HypeScoreTooltip } from "./HypeScoreTooltip";
 
@@ -20,7 +21,7 @@ interface HypeChartProps {
 const TERRACOTTA = "#D97B4F";
 const EAU = "#A8C4B8";
 
-function CustomTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function CustomTooltip({ active, payload, label }: TooltipProps<ValueType, NameType>) {
   if (!active || !payload || payload.length === 0) return null;
 
   const github = payload.find((p) => p.dataKey === "githubScore")?.value ?? 0;
