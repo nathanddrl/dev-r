@@ -101,7 +101,7 @@ export default function Home() {
         <section className="mb-12">
           <p
             className="text-[11px] font-medium uppercase tracking-[0.08em] mb-3"
-            style={{ color: "var(--color-accent, #D97B4F)", fontFamily: "var(--font-body)" }}
+            style={{ color: "var(--color-terracotta, #D97B4F)", fontFamily: "var(--font-body)" }}
           >
             Dashboard veille tech
           </p>
@@ -131,7 +131,7 @@ export default function Home() {
         >
           <p
             className="text-[11px] font-medium uppercase tracking-[0.08em] mb-2"
-            style={{ color: "var(--color-accent, #D97B4F)", fontFamily: "var(--font-body)" }}
+            style={{ color: "var(--color-terracotta, #D97B4F)", fontFamily: "var(--font-body)" }}
           >
             HypeScore
           </p>

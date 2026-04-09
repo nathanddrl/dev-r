@@ -22,7 +22,7 @@ const baseStyle: React.CSSProperties = {
 function pillStyle(active: boolean): React.CSSProperties {
   return {
     ...baseStyle,
-    background: active ? "var(--color-accent, #D97B4F)" : "var(--color-accent-light, #F5EBD8)",
+    background: active ? "var(--color-terracotta, #D97B4F)" : "var(--color-accent-light, #F5EBD8)",
     color: active ? "#ffffff" : "var(--color-accent-dark, #8B5E2B)",
   };
 }
