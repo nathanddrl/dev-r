@@ -8,15 +8,14 @@ import { DevToSection } from "@/components/DevToSection";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL ??
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000");
+function getBaseUrl() {
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  return 'http://localhost:3000'
+}
 
 async function GitHubSectionAsync() {
   try {
-    const res = await fetch(`${BASE_URL}/api/github/trending`, {
+    const res = await fetch(`${getBaseUrl()}/api/github/trending`, {
       next: { revalidate: 900 },
     });
     const json = (await res.json()) as { data?: GitHubRepo[] };
@@ -29,7 +28,7 @@ async function GitHubSectionAsync() {
 
 async function DevToSectionAsync() {
   try {
-    const res = await fetch(`${BASE_URL}/api/devto/articles`, {
+    const res = await fetch(`${getBaseUrl()}/api/devto/articles`, {
       next: { revalidate: 600 },
     });
     const json = (await res.json()) as { data?: DevToArticle[] };
@@ -42,7 +41,7 @@ async function DevToSectionAsync() {
 
 async function HypeChartAsync() {
   try {
-    const res = await fetch(`${BASE_URL}/api/stats/hype`, {
+    const res = await fetch(`${getBaseUrl()}/api/stats/hype`, {
       next: { revalidate: 600 },
     });
     const json = (await res.json()) as { data?: HypeScore[] };
