@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { TooltipProps } from "recharts";
+import type { TooltipContentProps } from "recharts/types/component/Tooltip";
 import type { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 import type { HypeScore } from "@/types/hype";
 import { HypeScoreTooltip } from "./HypeScoreTooltip";
@@ -21,7 +21,7 @@ interface HypeChartProps {
 const TERRACOTTA = "#D97B4F";
 const EAU = "#A8C4B8";
 
-function CustomTooltip({ active, payload, label }: TooltipProps<ValueType, NameType>) {
+function CustomTooltip({ active, payload, label }: TooltipContentProps<ValueType, NameType>) {
   if (!active || !payload || payload.length === 0) return null;
 
   const github = payload.find((p) => p.dataKey === "githubScore")?.value ?? 0;
@@ -84,7 +84,7 @@ export function HypeChart({ data }: HypeChartProps) {
         <BarChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
           <XAxis dataKey="name" tick={{ fontSize: 12, fill: "var(--color-text-secondary, #6B6560)", fontFamily: "var(--font-body)" }} />
           <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}`} tick={{ fontSize: 11, fill: "var(--color-text-tertiary, #9E9890)", fontFamily: "var(--font-body)" }} label={{ value: "Score /100", angle: -90, position: "insideLeft", offset: 10, style: { fontSize: 11, fill: "var(--color-text-tertiary, #9E9890)" } }} />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={CustomTooltip} />
           <Legend verticalAlign="bottom" wrapperStyle={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--color-text-secondary, #6B6560)" }} />
           <Bar dataKey="githubScore" name="GitHub" fill={TERRACOTTA} radius={[4, 4, 0, 0]} />
           <Bar dataKey="devtoScore" name="Dev.to" fill={EAU} radius={[4, 4, 0, 0]} />
