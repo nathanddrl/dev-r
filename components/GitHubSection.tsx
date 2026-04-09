@@ -35,7 +35,7 @@ export function GitHubSection({ repos, lastFetchedAt }: GitHubSectionProps) {
         <Card className="flex flex-col items-center justify-center p-8 text-center min-h-[400px]">
           <span className="text-3xl mb-3">⚠️</span>
           <p className="text-sm text-muted-foreground">
-            Source indisponible — réessayez dans quelques minutes
+            Source indisponible - réessayez dans quelques minutes
           </p>
         </Card>
       </section>

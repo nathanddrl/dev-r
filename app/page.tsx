@@ -121,7 +121,7 @@ export default function Home() {
           </p>
         </section>
 
-        {/* HypeChart — pleine largeur */}
+        {/* HypeChart - pleine largeur */}
         <section
           className="mb-10 rounded-[16px] p-6"
           style={{

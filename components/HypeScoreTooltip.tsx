@@ -20,11 +20,11 @@ export function HypeScoreTooltip() {
           <ul className="space-y-1 list-none">
             <li>
               • <span className="font-medium">GitHub</span> : (stars × 0.6 +
-              forks × 0.4) normalisé /100 — poids 60%
+              forks × 0.4) normalisé /100 - poids 60%
             </li>
             <li>
               • <span className="font-medium">Dev.to</span> : réactions des
-              articles liés, normalisé /100 — poids 40%
+              articles liés, normalisé /100 - poids 40%
             </li>
           </ul>
         </TooltipContent>

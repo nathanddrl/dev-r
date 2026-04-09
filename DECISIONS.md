@@ -1,6 +1,6 @@
-# DECISIONS.md — Dev'R
+# DECISIONS.md - Dev'R
 
-## ADR-001 — GitHub Search workaround
+## ADR-001 - GitHub Search workaround
 
 **Contexte** : GitHub ne fournit pas d'endpoint `/trending` officiel dans son API REST.
 
@@ -17,14 +17,14 @@
 
 ---
 
-## ADR-002 — Cache in-memory vs Redis
+## ADR-002 - Cache in-memory vs Redis
 
 **Contexte** : Les routes `/api` appellent GitHub et Dev.to à chaque requête. Sans cache, rate limit atteint rapidement.
 
 **Options considérées** :
-- Redis (Upstash) — persistant, partagé entre instances
-- Cache in-memory Node.js — simple, zéro infra
-- Pas de cache — appels directs à chaque requête
+- Redis (Upstash) - persistant, partagé entre instances
+- Cache in-memory Node.js - simple, zéro infra
+- Pas de cache - appels directs à chaque requête
 
 **Choix retenu** : Cache in-memory via `InMemoryCache` implémentant l'interface `ICache`.
 
@@ -34,13 +34,13 @@
 
 ---
 
-## ADR-003 — TTL 15min GitHub / 10min Dev.to
+## ADR-003 - TTL 15min GitHub / 10min Dev.to
 
 **Contexte** : Les deux APIs ont des rate limits différents et des rythmes de mise à jour différents.
 
 **Options considérées** :
-- TTL court (1-2min) — données fraîches, risk de rate limit
-- TTL long (1h+) — données stales, mauvaise UX
+- TTL court (1-2min) - données fraîches, risk de rate limit
+- TTL long (1h+) - données stales, mauvaise UX
 - TTL calibré sur le rate limit réel
 
 **Choix retenu** : TTL 15min pour GitHub, 10min pour Dev.to.
@@ -53,7 +53,7 @@
 
 ---
 
-## ADR-004 — HypeScore composite (triangulation deux sources)
+## ADR-004 - HypeScore composite (triangulation deux sources)
 
 **Contexte** : GitHub et Dev.to mesurent l'intérêt tech différemment. GitHub = activité code. Dev.to = intérêt communauté.
 
@@ -62,7 +62,7 @@
 - Score Dev.to seul (reactions + views)
 - Score composite pondéré
 
-**Choix retenu** : Score composite — 60% GitHub / 40% Dev.to.
+**Choix retenu** : Score composite - 60% GitHub / 40% Dev.to.
 
 **Formule** :
 ```
@@ -77,7 +77,7 @@ HypeScore     = GitHub score × 0.6 + Dev.to score × 0.4
 
 ---
 
-## ADR-005 — Pas d'auth GitHub MVP
+## ADR-005 - Pas d'auth GitHub MVP
 
 **Contexte** : GitHub API sans token = 60 req/heure (unauthenticated). Avec token = 5000 req/heure.
 

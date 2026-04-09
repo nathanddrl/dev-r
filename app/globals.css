@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Palette — Tailwind utilities (bg-terracotta, text-eau, etc.) */
+  /* Palette - Tailwind utilities (bg-terracotta, text-eau, etc.) */
   --color-sable:              #FAF7F2;
   --color-minuit:             #1C1916;
   --color-terracotta:         #D97B4F;
@@ -54,7 +54,7 @@
   --radius-full: 9999px;
 }
 
-/* ─── Design tokens — source de vérité ──────────────────────────────── */
+/* ─── Design tokens - source de vérité ──────────────────────────────── */
 :root {
   /* Fond & surfaces */
   --color-bg:              #FAF7F2;   /* Sable */
@@ -65,7 +65,7 @@
   --color-text-secondary:  #6B6560;
   --color-text-tertiary:   #9E9890;
 
-  /* Accent terracotta — chips, badges, hover bg */
+  /* Accent terracotta - chips, badges, hover bg */
   --color-accent-light:    #F5EBD8;   /* fond chip */
   --color-accent-dark:     #8B5E2B;   /* texte chip */
 
@@ -83,29 +83,29 @@
   --space-3xl: 48px;
   --space-4xl: 64px;
 
-  /* ── shadcn tokens — référencent les design tokens ci-dessus ── */
+  /* ── shadcn tokens - référencent les design tokens ci-dessus ── */
   /* Note : --color-terracotta (#D97B4F) et --color-eau (#A8C4B8)
      sont définis dans @theme inline et accessibles via var() */
 
   --background:             var(--color-bg);
   --foreground:             var(--color-text-primary);
 
-  --card:                   var(--color-bg);          /* Sable — contraste sur Lin */
+  --card:                   var(--color-bg);          /* Sable - contraste sur Lin */
   --card-foreground:        var(--color-text-primary);
 
   --popover:                var(--color-surface);
   --popover-foreground:     var(--color-text-primary);
 
-  --primary:                var(--color-terracotta);   /* #D97B4F — CTA, interactif */
+  --primary:                var(--color-terracotta);   /* #D97B4F - CTA, interactif */
   --primary-foreground:     #ffffff;
 
-  --secondary:              var(--color-eau);          /* #A8C4B8 — états secondaires */
+  --secondary:              var(--color-eau);          /* #A8C4B8 - états secondaires */
   --secondary-foreground:   var(--color-text-primary);
 
   --muted:                  var(--color-surface);      /* #E8DFD0 */
   --muted-foreground:       var(--color-text-secondary);
 
-  --accent:                 var(--color-accent-light); /* #F5EBD8 — hover bg, chips */
+  --accent:                 var(--color-accent-light); /* #F5EBD8 - hover bg, chips */
   --accent-foreground:      var(--color-accent-dark);  /* #8B5E2B */
 
   --destructive:            oklch(0.577 0.245 27.325);
@@ -132,7 +132,7 @@
   --sidebar-ring:                   var(--color-terracotta);
 }
 
-/* ─── Dark mode — uniquement les overrides ──────────────────────────── */
+/* ─── Dark mode - uniquement les overrides ──────────────────────────── */
 .dark {
   --color-bg:              #1C1916;   /* Minuit */
   --color-surface:         #2A2520;

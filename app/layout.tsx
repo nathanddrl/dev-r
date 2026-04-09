@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dev'R — Veille tech",
-  description: "Dashboard de veille tech — GitHub trending + Dev.to",
+  title: "Dev'R - Veille tech",
+  description: "Dashboard de veille tech - GitHub trending + Dev.to",
 };
 
 export default function RootLayout({
