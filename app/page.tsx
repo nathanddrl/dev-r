@@ -1,26 +1,23 @@
 import { Suspense } from "react";
-import type { GitHubRepo } from "@/types/github";
-import type { DevToArticle } from "@/types/devto";
-import type { HypeScore } from "@/types/hype";
 import { HypeChart } from "@/components/HypeChart";
 import { GitHubSection } from "@/components/GitHubSection";
 import { DevToSection } from "@/components/DevToSection";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { Skeleton } from "@/components/ui/skeleton";
-
-function getBaseUrl() {
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-  return 'http://localhost:3000'
-}
+import { fetchGitHubTrending } from "@/lib/github";
+import { fetchDevToArticles } from "@/lib/devto";
+import { computeHypeScore } from "@/lib/aggregator";
+import { cache } from "@/lib/cache";
+import type { GitHubRepo } from "@/types/github";
+import type { DevToArticle } from "@/types/devto";
 
 async function GitHubSectionAsync() {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/github/trending`, {
-      next: { revalidate: 900 },
-    });
-    const json = (await res.json()) as { data?: GitHubRepo[] };
-    const data = json.data ?? [];
-    return <GitHubSection repos={data} lastFetchedAt={Date.now()} />;
+    const cacheKey = "github:trending:";
+    const cached = cache.get<GitHubRepo[]>(cacheKey);
+    const repos = cached ?? await fetchGitHubTrending("");
+    if (!cached) cache.set<GitHubRepo[]>(cacheKey, repos, 15 * 60 * 1000);
+    return <GitHubSection repos={repos} lastFetchedAt={Date.now()} />;
   } catch {
     return <GitHubSection repos={[]} lastFetchedAt={Date.now()} />;
   }
@@ -28,12 +25,11 @@ async function GitHubSectionAsync() {
 
 async function DevToSectionAsync() {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/devto/articles`, {
-      next: { revalidate: 600 },
-    });
-    const json = (await res.json()) as { data?: DevToArticle[] };
-    const data = json.data ?? [];
-    return <DevToSection articles={data} lastFetchedAt={Date.now()} />;
+    const cacheKey = "devto:articles:";
+    const cached = cache.get<DevToArticle[]>(cacheKey);
+    const articles = cached ?? await fetchDevToArticles();
+    if (!cached) cache.set<DevToArticle[]>(cacheKey, articles, 10 * 60 * 1000);
+    return <DevToSection articles={articles} lastFetchedAt={Date.now()} />;
   } catch {
     return <DevToSection articles={[]} lastFetchedAt={Date.now()} />;
   }
@@ -41,11 +37,12 @@ async function DevToSectionAsync() {
 
 async function HypeChartAsync() {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/stats/hype`, {
-      next: { revalidate: 600 },
-    });
-    const json = (await res.json()) as { data?: HypeScore[] };
-    return <HypeChart data={json.data ?? []} />;
+    const [repos, articles] = await Promise.all([
+      fetchGitHubTrending(""),
+      fetchDevToArticles(),
+    ]);
+    const data = computeHypeScore(repos, articles);
+    return <HypeChart data={data} />;
   } catch {
     return <HypeChart data={[]} />;
   }
