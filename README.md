@@ -1,6 +1,8 @@
 # Dev'R — Tech Radar Personnel
 
-[![Vercel Deploy](https://img.shields.io/badge/Vercel-Deploy-black?logo=vercel)](https://vercel.com)
+**Live →** [dev-r-gilt.vercel.app](https://dev-r-gilt.vercel.app)
+
+[![Vercel Deploy](https://img.shields.io/badge/Vercel-Deploy-black?logo=vercel)](https://dev-r-gilt.vercel.app)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript)](https://www.typescriptlang.org/)
 
 ---
